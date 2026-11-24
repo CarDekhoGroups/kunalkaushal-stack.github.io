@@ -119,7 +119,7 @@ sections = "".join(
 rows = "".join(row(d) for d in DASHBOARDS)
 
 PAGE = open(os.path.join(ROOT, "src", "template.html"), encoding="utf-8").read()
-out = (PAGE.replace("{{NAV}}", nav).replace("{{CHIPS}}", chips).replace("{{SECTIONS}}", sections).replace("{{ROWS}}", rows)
+out = (PAGE.replace("{{CHIPS}}", chips).replace("{{SECTIONS}}", sections).replace("{{ROWS}}", rows)
        .replace("{{N_TOTAL}}", str(len(DASHBOARDS))).replace("{{N_OEM}}", str(counts["oem"])).replace("{{N_LIVE}}", str(n_live)))
 assert "{{" not in out
 open(os.path.join(ROOT, "index.html"), "w", encoding="utf-8", newline="\n").write(out)
