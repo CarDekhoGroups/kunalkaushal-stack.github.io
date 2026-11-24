@@ -269,6 +269,48 @@ img { display: block }
   .grid-oem { grid-template-columns: repeat(2, 1fr) }
 }
 @media (prefers-reduced-motion: reduce) { *,*::before,*::after { animation-duration: .01ms !important; transition-duration: .01ms !important } html { scroll-behavior: auto } }
+
+/* ─── Motion (subtle) ──────────────────────────────────────────── */
+:root { --ease-out: cubic-bezier(.2,.8,.2,1) }
+.site-header { transition: box-shadow .25s ease }
+.site-header.scrolled { box-shadow: 0 6px 18px -12px rgba(15,23,42,.35) }
+.dash-card {
+  transition: border-color .25s ease, box-shadow .35s var(--ease-out), transform .35s var(--ease-out);
+  will-change: transform;
+}
+.dash-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 28px -14px rgba(15,23,42,.28), 0 2px 6px -2px rgba(15,23,42,.08);
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--border));
+}
+.dash-card:active { transform: translateY(-1px); transition-duration: .1s }
+/* cards rise in as they scroll into view, one after another */
+.dash-card.pre-reveal { opacity: 0 }
+.dash-card.revealed { animation: cardIn .55s var(--ease-out) backwards; animation-delay: var(--d, 0ms) }
+@keyframes cardIn { from { opacity: 0; transform: translateY(14px) scale(.985) } to { opacity: 1; transform: none } }
+/* logo: gentle zoom + a soft light sweep on hover */
+.card-logo-banner { position: relative }
+.card-logo-banner img, .card-logo-banner svg { transition: transform .45s var(--ease-out) }
+.dash-card:hover .card-logo-banner img, .dash-card:hover .card-logo-banner svg { transform: scale(1.06) }
+.card-logo-banner::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.45) 50%, transparent 70%);
+  transform: translateX(-120%); opacity: 0;
+}
+.dash-card:hover .card-logo-banner::after { transform: translateX(120%); opacity: 1; transition: transform .9s var(--ease-out), opacity .2s }
+.card-logo-banner.dark-bg::after { background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,.14) 50%, transparent 70%) }
+/* operations cards: the icon picks up the accent colour */
+.card-icon { transition: background .25s, color .25s, border-color .25s, transform .35s var(--ease-out) }
+.dash-card:hover .card-icon { background: var(--accent-dim); color: var(--accent); border-color: transparent; transform: rotate(-6deg) scale(1.06) }
+.card-ext { transition: transform .25s var(--ease-out), color .25s }
+.dash-card:hover .card-ext { transform: translate(2px,-2px); color: var(--accent) }
+.card-cta i { transition: transform .3s var(--ease-out) }
+.dash-card:hover .card-cta i { transform: translateX(4px) }
+@media (prefers-reduced-motion: reduce) {
+  .dash-card.pre-reveal { opacity: 1 }
+  .dash-card:hover, .dash-card:hover .card-logo-banner img, .dash-card:hover .card-logo-banner svg, .dash-card:hover .card-icon { transform: none }
+  .card-logo-banner::after { display: none }
+}
   </style>
 </head>
 <body>
@@ -754,6 +796,32 @@ document.addEventListener('keydown', e => {
     searchInput.value = ''; runSearch(''); searchInput.blur();
   }
 });
+  </script>
+  <script>
+  /* Subtle motion: header shadow once the page scrolls, cards fade up as they come into view.
+     Nothing happens for people who ask their system for reduced motion. */
+  (function () {
+    var hdr = document.querySelector('.site-header');
+    if (hdr) {
+      var onScroll = function () { hdr.classList.toggle('scrolled', window.scrollY > 4); };
+      window.addEventListener('scroll', onScroll, { passive: true }); onScroll();
+    }
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce || !('IntersectionObserver' in window)) return;
+    var cards = Array.prototype.slice.call(document.querySelectorAll('.dash-card'));
+    cards.forEach(function (c) { c.classList.add('pre-reveal'); });
+    var io = new IntersectionObserver(function (entries) {
+      entries.filter(function (e) { return e.isIntersecting; })
+        .map(function (e) { return e.target; })
+        .sort(function (a, b) { return cards.indexOf(a) - cards.indexOf(b); })
+        .forEach(function (c, i) {
+          c.style.setProperty('--d', Math.min(i * 45, 360) + 'ms');
+          c.classList.remove('pre-reveal'); c.classList.add('revealed');
+          io.unobserve(c);
+        });
+    }, { rootMargin: '0px 0px -6% 0px', threshold: 0.05 });
+    cards.forEach(function (c) { io.observe(c); });
+  })();
   </script>
 </body>
 </html>
