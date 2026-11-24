@@ -311,6 +311,28 @@ img { display: block }
   .dash-card:hover, .dash-card:hover .card-logo-banner img, .dash-card:hover .card-logo-banner svg, .dash-card:hover .card-icon { transform: none }
   .card-logo-banner::after { display: none }
 }
+
+/* ─── OEM glow: a soft halo in the brand's own colour on hover / tap ─── */
+.grid-oem .dash-card { --glow: 59,130,246 }
+.grid-oem .dash-card[href*="royal-enfield"] { --glow: 200,30,40 }
+.grid-oem .dash-card[href*="hero-ldr"]      { --glow: 225,35,40 }
+.grid-oem .dash-card[href*="tvs"]           { --glow: 30,60,170 }
+.grid-oem .dash-card[href*="honda"]         { --glow: 204,0,0 }
+.grid-oem .dash-card[href*="h-d-x-440"]     { --glow: 245,120,20 }
+.grid-oem .dash-card[href*="ather"]         { --glow: 40,60,100 }
+.grid-oem .dash-card[href*="ampere"]        { --glow: 20,160,140 }
+.grid-oem .dash-card[href*="bgauss"]        { --glow: 11,110,79 }
+.grid-oem .dash-card[href*="bajaj"]         { --glow: 0,85,170 }
+.grid-oem .dash-card[href*="jawa"]          { --glow: 170,30,40 }
+.grid-oem .dash-card:hover, .grid-oem .dash-card:focus-visible, .grid-oem .dash-card.touched {
+  border-color: rgba(var(--glow), .45);
+  box-shadow: 0 0 0 1px rgba(var(--glow), .18), 0 10px 26px -10px rgba(var(--glow), .45), 0 0 22px -4px rgba(var(--glow), .30);
+}
+.grid-oem .dash-card.touched { transform: translateY(-4px) }
+[data-theme="dark"] .grid-oem .dash-card:hover, [data-theme="dark"] .grid-oem .dash-card.touched {
+  box-shadow: 0 0 0 1px rgba(var(--glow), .35), 0 10px 30px -8px rgba(var(--glow), .55), 0 0 26px -2px rgba(var(--glow), .40);
+}
+@media (prefers-reduced-motion: reduce) { .grid-oem .dash-card.touched { transform: none } }
   </style>
 </head>
 <body>
@@ -821,6 +843,17 @@ document.addEventListener('keydown', e => {
         });
     }, { rootMargin: '0px 0px -6% 0px', threshold: 0.05 });
     cards.forEach(function (c) { io.observe(c); });
+  })();
+  </script>
+  <script>
+  /* Touch screens: glow the OEM card while it is pressed (hover does not exist there). */
+  (function () {
+    document.querySelectorAll('.grid-oem .dash-card').forEach(function (c) {
+      c.addEventListener('touchstart', function () { c.classList.add('touched'); }, { passive: true });
+      ['touchend', 'touchcancel'].forEach(function (ev) {
+        c.addEventListener(ev, function () { setTimeout(function () { c.classList.remove('touched'); }, 350); }, { passive: true });
+      });
+    });
   })();
   </script>
 </body>
