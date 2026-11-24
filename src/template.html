@@ -177,8 +177,8 @@ img{display:block}
 .pre{opacity:0}
 .rise{animation:rise .55s var(--ease) backwards;animation-delay:var(--d,0ms)}
 @keyframes rise{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
-.page>.hero,.page>.kpis,.page>.toolbar{animation:rise .5s var(--ease) backwards}
-.page>.kpis{animation-delay:.06s} .page>.toolbar{animation-delay:.12s}
+.page>.hero,.page>.toolbar{animation:rise .5s var(--ease) backwards}
+.page>.toolbar{animation-delay:.08s}
 
 /* responsive */
 @media (max-width:1180px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.lhead,.lrow{grid-template-columns:minmax(220px,2fr) 1.2fr 1fr 44px}.c-sec,.c-src{display:none}.lhead .c-sec,.lhead .c-src{display:none}}
@@ -216,13 +216,6 @@ img{display:block}
           <h1>Dashboards</h1>
           <p>Lead performance, delivery and contribution across BikeDekho's OEM partners — one place for every bikes dashboard.</p>
         </div>
-      </div>
-
-      <div class="kpis">
-        <div class="kpi"><span class="k-ico"><i class="fas fa-layer-group"></i></span><div><div class="k-val" data-countup="{{N_TOTAL}}">{{N_TOTAL}}</div><div class="k-lbl">Dashboards</div></div></div>
-        <div class="kpi"><span class="k-ico"><i class="fas fa-handshake"></i></span><div><div class="k-val" data-countup="{{N_OEM}}">{{N_OEM}}</div><div class="k-lbl">OEM partners</div></div></div>
-        <div class="kpi"><span class="k-ico"><i class="fas fa-signal"></i></span><div><div class="k-val" data-countup="{{N_LIVE}}">{{N_LIVE}}</div><div class="k-lbl">Live data sources</div></div></div>
-        <div class="kpi"><span class="k-ico"><i class="fas fa-shield-halved"></i></span><div><div class="k-val">SSO</div><div class="k-lbl">Google sign-in &amp; roles</div></div></div>
       </div>
 
       <div class="toolbar">
